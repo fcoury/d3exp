@@ -6,18 +6,8 @@
     }
   </style>
   <body>
-    <script src="http://d3js.org/d3.v2.min.js" charset="utf-8"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script>
-      Array.prototype.unique = function() {
-        var output = [];
-        for (i = 0; i < this.length; i++) {
-          if (output.indexOf(this[i]) == -1) {
-            output.push(this[i]);
-          }
-        }
-        return output;
-      };
-
       var data = [
         { patient: "John Rivers", area: "Neonatal Intensive Care Unit", doctor: "Dr. Shapiro", violation: "violation 1" },
         { patient: "John Rivers", area: "Neonatal Intensive Care Unit", doctor: "Dr. Shapiro", violation: "violation 2" },
@@ -57,12 +47,31 @@
                 ]
               }
             ]
+          },
+          {
+            name: "Ambulatory",
+            doctors: [
+              {
+                name: "Dr. Peter Veickman",
+                violations: [
+                  "Violation 1", "Violation 2"
+                ]
+              },
+              {
+                name: "Dr. Andrew Leehman",
+                violations: [
+                  "Violation 1", "Violation 2", "Violation 3"
+                ]
+              }
+            ]
           }
         ]
-      }
+      };
 
       var width = 960,
           height = 500;
+
+      var circleSizeScale = d3.scale.linear().domain([0,7]).range([0,25]);
 
       var svgContainer = d3.select("body").append("svg")
         .attr("width", width)
@@ -72,22 +81,23 @@
         .data(convertedData.areas)
         .enter()
         .append("g")
+        .attr("transform", function(d, i) { return "translate(0," + (i * 50) + ")"; });
 
       node.append("circle")
-        .attr("cx", 50)
-        .attr("cy", function(d, i) { return (i + 1) * 50 })
+        .attr("cx", 25)
+        .attr("cy", 25)
         .attr("r", function(d) {
-          var x = d.doctors
+          var violations = d.doctors
             .map(function(d) { return d.violations.length; })
-            .reduce(function(p, c, i, array) { return p + c }) * 5;
-          console.log(x);
-          return x;
+            .reduce(function(p, c, i, array) { return p + c });
+          console.log("violations", violations);
+          return circleSizeScale(violations);
         })
         .style("fill", "green");
 
       node.append("text")
-        .attr("dy", ".3em")
-        .style("text-anchor", "middle")
+        .attr("x", 60)
+        .attr("y", 25)
         .text(function(d) { return d.name });
     </script>
   </body>
