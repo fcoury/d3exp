@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <style>
+    text {
+      font: 10px sans-serif;
+    }
+  </style>
+  <body>
+    <script src="http://d3js.org/d3.v2.min.js" charset="utf-8"></script>
+    <script>
+      Array.prototype.unique = function() {
+        var output = [];
+        for (i = 0; i < this.length; i++) {
+          if (output.indexOf(this[i]) == -1) {
+            output.push(this[i]);
+          }
+        }
+        return output;
+      };
+
+      var data = [
+        { patient: "John Rivers", area: "Neonatal Intensive Care Unit", doctor: "Dr. Shapiro", violation: "violation 1" },
+        { patient: "John Rivers", area: "Neonatal Intensive Care Unit", doctor: "Dr. Shapiro", violation: "violation 2" },
+        { patient: "John Rivers", area: "Neonatal Intensive Care Unit", doctor: "Dr. Shapiro", violation: "violation 3" },
+        { patient: "John Rivers", area: "Neonatal Intensive Care Unit", doctor: "Dr. Shapiro", violation: "violation 4" },
+        { patient: "John Rivers", area: "Intensive Care Unit", doctor: "Dr. Marcus Layre", violation: "violation 1" },
+        { patient: "John Rivers", area: "Intensive Care Unit", doctor: "Dr. Marcus Layre", violation: "violation 2" }
+      ];
+
+      var convertedData = {
+        name: "John Rivers",
+        areas: [
+          {
+            name: "Neonatal Intensive Care Unit",
+            doctors: [
+              {
+                name: "Dr. Shapiro",
+                violations: [
+                  "Violation 1", "Violation 2", "Violation 3"
+                ]
+              },
+              {
+                name: "Dr. Erin McPersson",
+                violations: [
+                  "Violation 1", "Violation 2", "Violation 3", "Violation 4"
+                ]
+              }
+            ]
+          },
+          {
+            name: "Intensive Care Unit",
+            doctors: [
+              {
+                name: "Dr. Marcus Layre",
+                violations: [
+                  "Violation 1", "Violation 2"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+
+      var width = 960,
+          height = 500;
+
+      var svgContainer = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+      var node = svgContainer.selectAll(".node")
+        .data(convertedData.areas)
+        .enter()
+        .append("g")
+
+      node.append("circle")
+        .attr("cx", 50)
+        .attr("cy", function(d, i) { return (i + 1) * 50 })
+        .attr("r", function(d) {
+          var x = d.doctors
+            .map(function(d) { return d.violations.length; })
+            .reduce(function(p, c, i, array) { return p + c }) * 5;
+          console.log(x);
+          return x;
+        })
+        .style("fill", "green");
+
+      node.append("text")
+        .attr("dy", ".3em")
+        .style("text-anchor", "middle")
+        .text(function(d) { return d.name });
+    </script>
+  </body>
+</html>
