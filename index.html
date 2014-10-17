@@ -87,8 +87,9 @@
             .reduce(function(p, c, i, array) { return p + c });
       };
 
-      var width = 960,
-          height = 500;
+      var margin = {top: 10, right: 10, bottom: 10, left: 10},
+          width = 960 - margin.left - margin.right,
+          height = 500 - margin.top - margin.bottom;
 
       var data = convertedData.areas;
       var minValue = d3.min(data.map(function(d) { return violations(d); }));
